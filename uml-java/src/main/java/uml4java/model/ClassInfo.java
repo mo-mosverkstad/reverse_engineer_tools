@@ -1,4 +1,4 @@
-package uml4java;
+package uml4java.model;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;

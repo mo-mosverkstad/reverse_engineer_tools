@@ -1,4 +1,4 @@
-package uml4java;
+package uml4java.model;
 
 public class MethodMember extends Member {
     private final String params;

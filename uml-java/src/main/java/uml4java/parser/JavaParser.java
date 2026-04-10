@@ -1,4 +1,6 @@
-package uml4java;
+package uml4java.parser;
+
+import uml4java.model.*;
 
 import java.io.*;
 import java.util.*;

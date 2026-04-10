@@ -1,8 +1,11 @@
-package uml4java;
+package uml4java.analysis;
+
+import uml4java.model.ClassInfo;
+import uml4java.parser.JavaParser;
+import uml4java.parser.TypeResolver;
 
 import java.nio.file.*;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 

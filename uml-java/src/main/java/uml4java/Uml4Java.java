@@ -1,5 +1,11 @@
 package uml4java;
 
+import uml4java.analysis.ClassDiscoverer;
+import uml4java.analysis.RelationshipDetector;
+import uml4java.model.ClassInfo;
+import uml4java.output.UmlGenerator;
+import uml4java.parser.JavaParser;
+
 import java.io.File;
 import java.util.*;
 

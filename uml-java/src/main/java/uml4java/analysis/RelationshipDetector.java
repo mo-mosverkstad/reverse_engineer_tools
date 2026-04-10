@@ -1,4 +1,7 @@
-package uml4java;
+package uml4java.analysis;
+
+import uml4java.model.*;
+import uml4java.parser.TypeResolver;
 
 import java.util.ArrayList;
 import java.util.List;

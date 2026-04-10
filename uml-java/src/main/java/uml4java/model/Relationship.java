@@ -1,4 +1,4 @@
-package uml4java;
+package uml4java.model;
 
 public class Relationship {
     public enum Type { ASSOCIATION, DEPENDENCY, INHERITANCE, IMPLEMENTATION }

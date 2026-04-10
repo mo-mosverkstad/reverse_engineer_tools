@@ -1,4 +1,4 @@
-package uml4java;
+package uml4java.model;
 
 public abstract class Member {
     private final char visibility;

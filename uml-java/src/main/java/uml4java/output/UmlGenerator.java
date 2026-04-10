@@ -1,4 +1,7 @@
-package uml4java;
+package uml4java.output;
+
+import uml4java.model.ClassInfo;
+import uml4java.model.Relationship;
 
 import java.io.*;
 import java.util.List;
