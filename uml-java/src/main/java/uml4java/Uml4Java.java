@@ -39,21 +39,25 @@ public class Uml4Java {
                 parser.scanDirectory(f.getPath());
             } else if (f.getName().endsWith(".java")) {
                 ClassInfo cls = parser.parseJavaFile(f.getPath());
-                if (!cls.name.isEmpty()) {
+                if (!cls.getName().isEmpty()) {
                     parser.addClass(cls);
                     searchDirs.add(f.getAbsoluteFile().getParent() + File.separator);
                 }
             }
         }
 
+        ClassDiscoverer discoverer = new ClassDiscoverer(
+                parser.getClasses(), parser.getUnresolved(), parser, parser.getResolver());
         for (String dir : searchDirs) {
-            parser.discoverClasses(dir);
+            discoverer.discover(dir);
         }
 
-        parser.detectRelationships();
-        UmlGenerator.generate(parser.getClasses(), parser.getRels(), outputFile);
+        RelationshipDetector detector = new RelationshipDetector(parser.getResolver());
+        detector.detect(parser.getClasses());
+
+        UmlGenerator.generate(parser.getClasses(), detector.getRels(), outputFile);
 
         System.out.printf("UML diagram generated: %s (%d classes, %d relationships)%n",
-                outputFile, parser.getClasses().size(), parser.getRels().size());
+                outputFile, parser.getClasses().size(), detector.getRels().size());
     }
 }
