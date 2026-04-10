@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: uml4java.analysis.RelationshipDetectorTest
+-------------------------------------------------------------------------------
+Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.101 s -- in uml4java.analysis.RelationshipDetectorTest
