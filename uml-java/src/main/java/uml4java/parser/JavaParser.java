@@ -6,6 +6,14 @@ import java.io.*;
 import java.util.*;
 import java.util.regex.*;
 
+/**
+ * Parses Java source files into {@link ClassInfo} model objects.
+ *
+ * <p>Extracts the package declaration, class name, inheritance/implementation,
+ * field and method members, and body-level type references ({@code new} expressions).
+ * Unresolved type names are tracked for later discovery by
+ * {@link uml4java.analysis.ClassDiscoverer}.</p>
+ */
 public class JavaParser {
     private final List<ClassInfo> classes = new ArrayList<>();
     private final Set<String> unresolved = new LinkedHashSet<>();
@@ -15,8 +23,11 @@ public class JavaParser {
         this.resolver = new TypeResolver(classes);
     }
 
+    /** @return the list of all classes parsed so far */
     public List<ClassInfo> getClasses() { return classes; }
+    /** @return the set of type names referenced but not yet resolved to a parsed class */
     public Set<String> getUnresolved() { return unresolved; }
+    /** @return the shared type resolver instance */
     public TypeResolver getResolver() { return resolver; }
 
     private void addUnresolved(String name) {
@@ -123,6 +134,16 @@ public class JavaParser {
         }
     }
 
+    /**
+     * Parses a single Java source file and returns its class information.
+     *
+     * <p>Extracts the package declaration, class header (name, extends, implements),
+     * top-level field and method declarations, and body-level {@code new} references.
+     * Any unresolved type names are added to the internal unresolved set.</p>
+     *
+     * @param filename absolute path to the {@code .java} file
+     * @return the parsed {@link ClassInfo} (name may be empty if parsing failed)
+     */
     public ClassInfo parseJavaFile(String filename) {
         ClassInfo cls = new ClassInfo();
         cls.setFilepath(filename);
@@ -138,6 +159,12 @@ public class JavaParser {
             while ((line = br.readLine()) != null) {
                 line = line.trim();
 
+                // Skip comments globally (before and inside class body)
+                if (line.isEmpty() || line.startsWith("//")) continue;
+                if (line.startsWith("/*") || line.startsWith("/**")) { inComment = true; }
+                if (inComment) { if (line.contains("*/")) inComment = false; continue; }
+                if (line.startsWith("*")) continue;
+
                 if (!packageFound && line.startsWith("package ")) {
                     String pkg = line.substring(8).replace(";", "").trim();
                     cls.setPackageName(pkg);
@@ -145,7 +172,7 @@ public class JavaParser {
                     continue;
                 }
 
-                if (!inClass && line.contains("class ") && !line.startsWith("//")) {
+                if (!inClass && line.contains("class ")) {
                     boolean hasBrace = line.contains("{");
 
                     int extIdx = line.indexOf("extends ");
@@ -180,11 +207,6 @@ public class JavaParser {
 
                 if (!inClass) continue;
 
-                if (line.isEmpty() || line.startsWith("//")) continue;
-                if (line.startsWith("/*")) { inComment = true; continue; }
-                if (inComment) { if (line.contains("*/")) inComment = false; continue; }
-                if (line.startsWith("*")) continue;
-
                 int prevBrace = braceCount;
                 for (char ch : line.toCharArray()) {
                     if (ch == '{') braceCount++;
@@ -213,10 +235,20 @@ public class JavaParser {
         return cls;
     }
 
+    /**
+     * Adds a pre-parsed class to the internal class list if it has a non-empty name.
+     *
+     * @param cls the class to register
+     */
     public void addClass(ClassInfo cls) {
         if (!cls.getName().isEmpty()) classes.add(cls);
     }
 
+    /**
+     * Recursively scans a directory for {@code .java} files and parses each one.
+     *
+     * @param dirPath the root directory to scan
+     */
     public void scanDirectory(String dirPath) {
         File dir = new File(dirPath);
         File[] files = dir.listFiles();

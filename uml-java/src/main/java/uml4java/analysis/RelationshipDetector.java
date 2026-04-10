@@ -6,16 +6,30 @@ import uml4java.parser.TypeResolver;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Detects UML relationships (inheritance, implementation, association, dependency)
+ * between parsed classes by inspecting their extends/implements declarations,
+ * field types, method signatures, and body-level type references.
+ */
 public class RelationshipDetector {
     private final List<Relationship> rels = new ArrayList<>();
     private final TypeResolver resolver;
 
+    /**
+     * @param resolver the type resolver used to classify type names
+     */
     public RelationshipDetector(TypeResolver resolver) {
         this.resolver = resolver;
     }
 
+    /** @return the list of detected relationships */
     public List<Relationship> getRels() { return rels; }
 
+    /**
+     * Analyzes all provided classes and populates the internal relationship list.
+     *
+     * @param classes the parsed classes to analyze
+     */
     public void detect(List<ClassInfo> classes) {
         for (ClassInfo c : classes) {
             detectInheritance(c);

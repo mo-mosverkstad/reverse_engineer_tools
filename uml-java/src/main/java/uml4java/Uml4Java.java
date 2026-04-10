@@ -9,6 +9,17 @@ import uml4java.parser.JavaParser;
 import java.io.File;
 import java.util.*;
 
+/**
+ * Entry point for the UML class-diagram generator.
+ *
+ * <p>Orchestrates the pipeline: parse Java sources → discover referenced classes
+ * → detect relationships → generate Mermaid Markdown output.</p>
+ *
+ * <p>Usage:</p>
+ * <pre>
+ * java uml4java.Uml4Java --type class --input &lt;java_file_or_dir&gt; [&lt;file2&gt; ...] --output &lt;md_file&gt;
+ * </pre>
+ */
 public class Uml4Java {
     public static void main(String[] args) {
         if (args.length < 6) {

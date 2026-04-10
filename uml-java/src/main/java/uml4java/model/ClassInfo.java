@@ -5,6 +5,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Represents a parsed Java class, including its name, package, inheritance,
+ * implemented interfaces, field/method members, and body-level type references.
+ */
 public class ClassInfo {
     private String name = "";
     private String filepath = "";
@@ -26,10 +30,19 @@ public class ClassInfo {
     public List<Member> getMembers() { return members; }
     public Set<String> getBodyRefs() { return bodyRefs; }
 
+    /** @param m the member to add to this class */
     public void addMember(Member m) { members.add(m); }
+    /** @param iface the fully-qualified or simple name of an implemented interface */
     public void addImplements(String iface) { implementsNames.add(iface); }
+    /** @param ref a type name referenced in the class body (e.g. via {@code new}) */
     public void addBodyRef(String ref) { bodyRefs.add(ref); }
 
+    /**
+     * Renders this class as a Mermaid class-diagram block, listing fields first then methods.
+     *
+     * @param indent whitespace prefix for each line (controls nesting inside a namespace)
+     * @return the Mermaid syntax string for this class
+     */
     public String toMermaid(String indent) {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("%sclass %s {\r\n", indent, name));
