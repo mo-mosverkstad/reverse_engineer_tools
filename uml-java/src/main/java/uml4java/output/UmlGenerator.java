@@ -4,7 +4,7 @@ import uml4java.model.ClassInfo;
 import uml4java.model.Relationship;
 
 import java.io.*;
-import java.util.List;
+import java.util.*;
 
 public class UmlGenerator {
     public static void generate(List<ClassInfo> classes, List<Relationship> rels, String outputFile) {
@@ -13,9 +13,26 @@ public class UmlGenerator {
             pw.print("```mermaid\r\n");
             pw.print("classDiagram\r\n");
 
+            Map<String, List<ClassInfo>> byPackage = new LinkedHashMap<>();
             for (ClassInfo cls : classes) {
-                pw.print(cls.toMermaid());
+                byPackage.computeIfAbsent(cls.getPackageName(), k -> new ArrayList<>()).add(cls);
             }
+
+            for (Map.Entry<String, List<ClassInfo>> entry : byPackage.entrySet()) {
+                String pkg = entry.getKey();
+                if (pkg.isEmpty()) {
+                    for (ClassInfo cls : entry.getValue()) {
+                        pw.print(cls.toMermaid("    "));
+                    }
+                } else {
+                    pw.printf("    namespace %s {\r\n", pkg);
+                    for (ClassInfo cls : entry.getValue()) {
+                        pw.print(cls.toMermaid("        "));
+                    }
+                    pw.print("    }\r\n");
+                }
+            }
+
             for (Relationship r : rels) {
                 pw.print(r.toMermaid() + "\r\n");
             }

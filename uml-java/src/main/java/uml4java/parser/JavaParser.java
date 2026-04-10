@@ -131,11 +131,19 @@ public class JavaParser {
         try (BufferedReader br = new BufferedReader(new FileReader(filename))) {
             String line;
             boolean inClass = false;
+            boolean packageFound = false;
             int braceCount = 0;
             boolean inComment = false;
 
             while ((line = br.readLine()) != null) {
                 line = line.trim();
+
+                if (!packageFound && line.startsWith("package ")) {
+                    String pkg = line.substring(8).replace(";", "").trim();
+                    cls.setPackageName(pkg);
+                    packageFound = true;
+                    continue;
+                }
 
                 if (!inClass && line.contains("class ") && !line.startsWith("//")) {
                     boolean hasBrace = line.contains("{");
